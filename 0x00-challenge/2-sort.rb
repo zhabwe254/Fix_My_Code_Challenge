@@ -1,19 +1,32 @@
-#!/usr/bin/env ruby
+###
+#
+#  Sort integer arguments (ascending) 
+#
+###
 
-require 'optparse'
+result = []
+ARGV.each do |arg|
+    # skip if not integer
+    next if arg !~ /^-?[0-9]+$/
 
-# Define default behavior: sort ascending, start from first argument
-options = {}
-OptionParser.new do |opts|
-  opts.on('-d', '--descending', 'Sort in descending order (default: ascending)') { |v| options[:descending] = true }
-  opts.on('-s', '--start', Integer, 'Index of the first argument to sort (default: 1)') { |v| options[:start] = v }
-end.parse!
+    # convert to integer
+    i_arg = arg.to_i
+    
+    # insert result at the right position
+    is_inserted = false
+    i = 0
+    l = result.size
+    while !is_inserted && i < l do
+        if result[i] <= i_arg
+            i += 1
+        else
+            result.insert(i, i_arg)
+            is_inserted = true
+            break
+        end
+    end
+    result << i_arg if !is_inserted
+end
 
-# Extract valid integer arguments starting from specified index
-arguments = ARGV[options[:start] - 1..-1].select { |arg| arg =~ /^-?[0-9]+$/ }.map(&:to_i)
+puts result
 
-# Sort based on desired order
-sorted_arguments = options[:descending] ? arguments.sort { |a, b| b <=> a } : arguments.sort
-
-# Print the sorted arguments
-puts sorted_arguments.join(' ')
